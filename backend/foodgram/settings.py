@@ -115,3 +115,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MAX_LENGTH = 254
+
+MIN_COOKING_TIME = 0
+MIN_COOKING_TIME_ERROR = 'Минимальное время приготовления - 1 минута'
+
+MAX_COOKING_TIME = 600
+MAX_COOKING_TIME_ERROR = 'Максимальное время приготовления - 600 минут'
+
+MIN_AMOUNT_INGREDIENT = 1
+MIN_AMOUNT_INGREDIENT_ERROR = 'Минимальное количество игредиентов - 2'
