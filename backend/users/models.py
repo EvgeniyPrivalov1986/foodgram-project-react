@@ -4,6 +4,7 @@ from django.db import models
 
 
 class UserRole:
+    """Модель роли пользователей."""
     USER = 'user'
     ADMIN = 'admin'
     ROLES = [
@@ -43,7 +44,8 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ['id']
-        verbose_name = 'User'
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     def __str__(self):
         return self.username
