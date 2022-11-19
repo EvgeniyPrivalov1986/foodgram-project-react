@@ -95,10 +95,6 @@ class Recipe(models.Model):
         verbose_name='Название рецепта',
         unique=True
     )
-    image = models.ImageField(
-        upload_to='recipes/',
-        verbose_name='Картинка',
-    )
     text = models.TextField(
         verbose_name='Рецепт блюда',
         unique=True
