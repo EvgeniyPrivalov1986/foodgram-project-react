@@ -9,7 +9,8 @@ services:
     env_file:
       - ./.env
   web:
-    image: evgeniyprivalov1986/yamdb_final
+    image: evgeniyprivalov1986/foodgram-project-react:latest
+
     restart: always
     volumes:
       - static_value:/app/static/
