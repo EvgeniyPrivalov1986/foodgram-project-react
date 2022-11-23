@@ -72,7 +72,7 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
-    """Модель рецептов."""    
+    """Модель рецептов."""
     ingredients = models.ManyToManyField(
         Ingredient,
         through='IngredientsInRecipe',
@@ -103,11 +103,11 @@ class Recipe(models.Model):
         verbose_name='Время приготовления в минутах',
         validators=[
             MinValueValidator(
-                settings.MIN_COOKING_TIME, 
+                settings.MIN_COOKING_TIME,
                 settings.MIN_COOKING_TIME_ERROR
             ),
             MaxValueValidator(
-                settings.MAX_COOKING_TIME, 
+                settings.MAX_COOKING_TIME,
                 settings.MAX_COOKING_TIME_ERROR
             )
         ]
@@ -127,7 +127,7 @@ class Recipe(models.Model):
 
 
 class IngredientsInRecipe(models.Model):
-    """Модель списка ингредиентов.""" 
+    """Модель списка ингредиентов."""
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
@@ -142,8 +142,8 @@ class IngredientsInRecipe(models.Model):
         verbose_name='Количество',
         validators=[
             MinValueValidator(
-                settings.MIN_AMOUNT_INGREDIENT, 
-                settings.MIN_AMOUNT_INGREDIENT_ERROR, 
+                settings.MIN_AMOUNT_INGREDIENT,
+                settings.MIN_AMOUNT_INGREDIENT_ERROR,
             )
         ]
     )
