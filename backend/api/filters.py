@@ -1,15 +1,18 @@
 from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework.filters import (AllValuesMultipleFilter,
                                                    BooleanFilter)
-from recipes.models import Recipe
 from rest_framework.filters import SearchFilter
+
+from recipes.models import Recipe
 
 
 class IngredientSearchFilter(SearchFilter):
+    """Фильтр поиска по имени."""  
     search_param = 'name'
 
 
 class RecipeFilterSet(FilterSet):
+    """Фильтр поиска по рецепту."""  
     tags = AllValuesMultipleFilter(field_name='tags__slug')
     is_favorited = BooleanFilter(method='get_is_favorited')
     is_in_shopping_cart = BooleanFilter(

@@ -4,10 +4,9 @@ from django.db import models
 
 
 class UserRole:
-    """Модель роли пользователей."""
     USER = 'user'
     ADMIN = 'admin'
-    ROLES = [
+    choices = [
         (USER, 'USER'),
         (ADMIN, 'ADMIN')
     ]
@@ -16,34 +15,37 @@ class UserRole:
 class User(AbstractUser):
     """Модель пользователей."""
     username = models.CharField(
-        unique=True,
         max_length=settings.MAX_LENGTH,
-        blank=False,
-        verbose_name='username'
+        unique=True,
+        verbose_name='Username'
     )
     email = models.EmailField(
-        'Почта пользователя',
+        'Электронная почта',
+        help_text='Электронная почта пользователя',
         max_length=settings.MAX_LENGTH,
         unique=True
     )
     first_name = models.TextField(
+        'Имя пользователя',
+        help_text='Имя пользователя',
         max_length=settings.MAX_LENGTH,
-        unique=True
     )
     last_name = models.TextField(
+        'Фамилия пользователя',
+        help_text='Фамилия пользователя',
         max_length=settings.MAX_LENGTH,
-        unique=True
     )
-    role = models.CharField(
-        choices=UserRole.ROLES,
+    role = models.TextField(
+        'Роль',
+        help_text='Роль пользователя',
+        choices=UserRole.choices,
         default=UserRole.USER,
-        max_length=settings.MAX_LENGTH,
     )
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id',)
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
@@ -69,13 +71,12 @@ class Follow(models.Model):
     class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
-        ordering = ['-id']
-        constraints = (
+        constraints = [
             models.UniqueConstraint(
                 fields=('user', 'author'),
-                name='unique_follow',
-            ),
-        )
+                name='unique_subscription_user_author'
+            )
+        ]
 
     def __str__(self):
-        return self.user
+        return f'{self.user} подписан на {self.author}.'

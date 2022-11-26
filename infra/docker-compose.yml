@@ -9,8 +9,9 @@ services:
       - ../backend/foodgram/.env
 
   backend:
-    image: avagners/foodgram-backend:latest
-    restart: always
+    build:
+      context: ../backend
+    restart: always  
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/ 
@@ -20,7 +21,8 @@ services:
       - ../backend/foodgram/.env
 
   frontend:
-    image: avagners/foodgram-frontend:latest
+    build:
+      context: ../frontend
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:

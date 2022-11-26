@@ -1,23 +1,38 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 
 from .models import Follow, User
 
 
-@admin.register(User)
-class UserAdmin(UserAdmin):
-    """Модель администрирование пользователей."""
+class BaseAdminSettings(admin.ModelAdmin):
+    """Базовая админ панель."""
+    empty_value_display = '-пусто-'
+    list_filter = ('email', 'username')
+
+
+class UsersAdmin(BaseAdminSettings):
+    """Управление пользователями через админ панель."""
     list_display = (
-        'username',
         'id',
+        'role',
+        'username',
         'email',
         'first_name',
-        'last_name',
+        'last_name'
     )
-    list_filter = ('email', 'first_name')
+    list_display_links = ('id', 'username')
+    search_fields = ('role', 'username')
 
 
-@admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
-    """Модель администрирование подписок."""
-    list_display = ('user', 'author',)
+    """Управление подписками через админ панель."""
+    list_display = (
+        'id',
+        'user',
+        'author'
+    )
+    list_display_links = ('id', 'user')
+    search_fields = ('user',)
+
+
+admin.site.register(User, UsersAdmin)
+admin.site.register(Follow, FollowAdmin)
