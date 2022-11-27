@@ -3,13 +3,8 @@ from django.contrib import admin
 from .models import Follow, User
 
 
-class BaseAdminSettings(admin.ModelAdmin):
-    """Базовая админ панель."""
-    empty_value_display = '-пусто-'
-    list_filter = ('email', 'username')
-
-
-class UsersAdmin(BaseAdminSettings):
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
     """Управление пользователями через админ панель."""
     list_display = (
         'id',
@@ -23,6 +18,7 @@ class UsersAdmin(BaseAdminSettings):
     search_fields = ('role', 'username')
 
 
+@admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
     """Управление подписками через админ панель."""
     list_display = (
@@ -32,7 +28,3 @@ class FollowAdmin(admin.ModelAdmin):
     )
     list_display_links = ('id', 'user')
     search_fields = ('user',)
-
-
-admin.site.register(User, UsersAdmin)
-admin.site.register(Follow, FollowAdmin)

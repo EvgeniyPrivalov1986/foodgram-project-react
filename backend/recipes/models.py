@@ -12,7 +12,8 @@ class Tag(models.Model):
     name = models.CharField(
         max_length=settings.MAX_LENGTH,
         verbose_name='Название тега',
-        db_index=True
+        db_index=True,
+        unique=True,
     )
     color = ColorField(
         format='hex',
@@ -21,10 +22,12 @@ class Tag(models.Model):
     slug = models.SlugField(
         max_length=settings.MAX_LENGTH,
         verbose_name='Группа блюд',
+        db_index=True,
         unique=True
     )
 
     class Meta:
+        ordering = ['name']
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -37,7 +40,8 @@ class Ingredient(models.Model):
     name = models.CharField(
         max_length=settings.MAX_LENGTH,
         verbose_name='Название ингредиента',
-        db_index=True
+        db_index=True,
+        unique=True
     )
     measurement_unit = models.CharField(
         max_length=settings.MAX_LENGTH,
@@ -68,11 +72,11 @@ class Recipe(models.Model):
     )
     image = models.ImageField(
         blank=True,
-        verbose_name='Фото',
+        verbose_name='Фото рецепта',
         upload_to='recipes/images'
     )
     text = models.TextField(
-        verbose_name='Рецепт блюда',
+        verbose_name='Описание рецепта',
         unique=True
     )
     ingredients = models.ManyToManyField(
@@ -83,7 +87,8 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(
         Tag,
-        related_name='recipes'
+        related_name='recipes',
+        verbose_name='Тeг',
     )
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления в минутах',
@@ -113,7 +118,7 @@ class Recipe(models.Model):
 
 
 class IngredientRecipe(models.Model):
-    """Модель списка ингредиентов."""
+    """Модель ингредиентов для рецепта."""
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
@@ -151,7 +156,7 @@ class IngredientRecipe(models.Model):
 
 
 class Favorite(models.Model):
-    """Модель избранного."""
+    """Модель избранных рецептов."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -174,7 +179,7 @@ class Favorite(models.Model):
                 name='unique_favorites',
             ),
         )
-        
+
     def __str__(self):
         return f'{self.user} добавил "{self.recipe}" в Избранное'
 
@@ -193,6 +198,7 @@ class Cart(models.Model):
     )
 
     class Meta:
+        ordering = ('-id',)
         verbose_name = 'Рецепт в корзине'
         verbose_name_plural = 'Корзина рецептов'
         constraints = [

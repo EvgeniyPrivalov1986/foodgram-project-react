@@ -4,6 +4,7 @@ from django.db import models
 
 
 class UserRole:
+    """Модель ролей пользователя."""
     USER = 'user'
     ADMIN = 'admin'
     choices = [
@@ -13,11 +14,11 @@ class UserRole:
 
 
 class User(AbstractUser):
-    """Модель пользователей."""
+    """Модель пользователя."""
     username = models.CharField(
+        'Пользователь',
         max_length=settings.MAX_LENGTH,
         unique=True,
-        verbose_name='Username'
     )
     email = models.EmailField(
         'Электронная почта',
@@ -25,19 +26,20 @@ class User(AbstractUser):
         max_length=settings.MAX_LENGTH,
         unique=True
     )
-    first_name = models.TextField(
+    first_name = models.CharField(
         'Имя пользователя',
         help_text='Имя пользователя',
         max_length=settings.MAX_LENGTH,
     )
-    last_name = models.TextField(
+    last_name = models.CharField(
         'Фамилия пользователя',
         help_text='Фамилия пользователя',
         max_length=settings.MAX_LENGTH,
     )
-    role = models.TextField(
+    role = models.CharField(
         'Роль',
         help_text='Роль пользователя',
+        max_length=settings.MAX_LENGTH,
         choices=UserRole.choices,
         default=UserRole.USER,
     )
@@ -54,7 +56,7 @@ class User(AbstractUser):
 
 
 class Follow(models.Model):
-    """Модель подписок."""
+    """Модель подписок на авторов."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

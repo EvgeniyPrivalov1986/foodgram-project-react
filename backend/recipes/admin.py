@@ -3,19 +3,13 @@ from django.contrib import admin
 from .models import Cart, Favorite, Ingredient, IngredientRecipe, Recipe, Tag
 
 
-class BaseAdminSettings(admin.ModelAdmin):
-    """Базовая кастомизация админ панели."""
-    empty_value_display = '-пусто-'
-    list_filter = ('author', 'name', 'tags')
-
-
 class IngredientRecipeInline(admin.TabularInline):
-    """Настройка админ зоны модели ингредиентов в рецепте."""
     model = IngredientRecipe
     extra = 0
 
 
-class TagAdmin(BaseAdminSettings):
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
     """Настройка админ панели модели тегов."""
     list_display = (
         'name',
@@ -27,7 +21,8 @@ class TagAdmin(BaseAdminSettings):
     list_filter = ('name',)
 
 
-class IngredientAdmin(BaseAdminSettings):
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
     """Настройка админ панели модели ингредиентов."""
     list_display = (
         'name',
@@ -38,11 +33,13 @@ class IngredientAdmin(BaseAdminSettings):
     list_filter = ('name',)
 
 
-class RecipeAdmin(BaseAdminSettings):
+@admin.register(Recipe)
+class RecipeAdmin(admin.ModelAdmin):
     """Настройка админ панели модели рецептов."""
     list_display = (
         'name',
         'author',
+        'tags',
         'in_favorite'
     )
     list_display_links = ('name',)
@@ -53,11 +50,13 @@ class RecipeAdmin(BaseAdminSettings):
     inlines = (IngredientRecipeInline,)
 
     def in_favorite(self, obj):
+        """Считает количество добавлений в избранное."""
         return obj.in_favorite.all().count()
 
     in_favorite.short_description = 'Количество добавлений в избранное'
 
 
+@admin.register(IngredientRecipe)
 class IngredientRecipeAdmin(admin.ModelAdmin):
     """Настройка админ панели модели ингредиентов в рецепте."""
     list_display = (
@@ -68,6 +67,7 @@ class IngredientRecipeAdmin(admin.ModelAdmin):
     list_filter = ('recipe', 'ingredient')
 
 
+@admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     """Настройка админ панели модели избранных рецептов."""
     list_display = ('user', 'recipe')
@@ -75,16 +75,9 @@ class FavoriteAdmin(admin.ModelAdmin):
     search_fields = ('user', 'recipe')
 
 
+@admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
     """Настройка админ панели модели продуктовой корзины."""
     list_display = ('recipe', 'user')
     list_filter = ('recipe', 'user')
     search_fields = ('user',)
-
-
-admin.site.register(Tag, TagAdmin)
-admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(Recipe, RecipeAdmin)
-admin.site.register(IngredientRecipe, IngredientRecipeAdmin)
-admin.site.register(Favorite, FavoriteAdmin)
-admin.site.register(Cart, CartAdmin)

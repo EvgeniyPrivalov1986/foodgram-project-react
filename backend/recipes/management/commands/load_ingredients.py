@@ -1,6 +1,6 @@
 import csv
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from recipes.models import Ingredient
 
@@ -8,8 +8,7 @@ from recipes.models import Ingredient
 class Command(BaseCommand):
     """
     Команда 'load_ingredients' загружает ингредиенты
-    в базу из csv файла, который располагается в
-    директории /data/
+    в базу из csv файла, расположенном в директории /data/
     """
 
     def handle(self, *args, **options):
@@ -19,10 +18,13 @@ class Command(BaseCommand):
     def import_ingredients(self, file='ingredients.csv'):
         print(f'Загрузка {file}...')
         file_path = f'./data/{file}'
-        with open(file_path, newline='', encoding='utf-8') as f:
-            reader = csv.reader(f)
-            for row in reader:
-                status, created = Ingredient.objects.update_or_create(
-                    name=row[0],
-                    measurement_unit=row[1]
-                )
+        try:
+            with open(file_path, newline='', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                for row in reader:
+                    status, created = Ingredient.objects.update_or_create(
+                        name=row[0],
+                        measurement_unit=row[1]
+                    )
+        except FileNotFoundError:
+            raise CommandError(f'Файл {file} отсутствует в каталоге data')

@@ -64,4 +64,4 @@
 
 ---
 ## Автор
-**[Евгений Привалов](https://github.com/EvgeniyPrivalov1986)** - создание api, деплой на сервер.
+**[Евгений Привалов](https://github.com/EvgeniyPrivalov1986)**

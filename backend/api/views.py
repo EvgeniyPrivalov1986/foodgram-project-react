@@ -25,16 +25,18 @@ from users.models import Follow, User
 
 
 class UsersViewSet(UserViewSet):
-    """Viewset для создания и получения отзыва."""
+    """Viewset для работы с пользователями и подписками."""
     pagination_class = CustomPagination
 
     @action(['get'], detail=False, permission_classes=[IsAuthenticated])
     def me(self, request, *args, **kwargs):
+        """Текущий пользователя."""
         self.get_object = self.get_instance
         return self.retrieve(request, *args, **kwargs)
 
     @action(methods=['get'], detail=False)
     def subscriptions(self, request):
+        """Список авторов, на которых подписан пользователь."""
         subscriptions_list = self.paginate_queryset(
             User.objects.filter(following__user=request.user)
         )
@@ -47,6 +49,7 @@ class UsersViewSet(UserViewSet):
 
     @action(methods=['post', 'delete'], detail=True)
     def subscribe(self, request, id):
+        """Текущий пользователь подписывается/отписывается от автора."""
         if request.method != 'POST':
             subscription = get_object_or_404(
                 Follow,
@@ -68,6 +71,7 @@ class UsersViewSet(UserViewSet):
 
 
 class RecipeViewSet(ModelViewSet):
+    """Viewset для работы с рецептами, продуктовой корзиной и избранным."""
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = CustomPagination
@@ -76,12 +80,14 @@ class RecipeViewSet(ModelViewSet):
     permission_classes = (IsAuthorOrAdminOrReadOnly, IsAuthenticatedOrReadOnly)
 
     def get_serializer_class(self):
+        """Получает класс сериализатора."""
         if self.request.method in SAFE_METHODS:
             return RecipeSerializer
         return CreateRecipeSerializer
 
     @staticmethod
     def post_method_for_actions(request, pk, serializers):
+        """Действия для POST-запросов."""
         data = {'user': request.user.id, 'recipe': pk}
         serializer = serializers(data=data, context={'request': request})
         serializer.is_valid(raise_exception=True)
@@ -90,6 +96,7 @@ class RecipeViewSet(ModelViewSet):
 
     @staticmethod
     def delete_method_for_actions(request, pk, model):
+        """Действия для DELETE-запросов."""
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         model_instance = get_object_or_404(model, user=user, recipe=recipe)
@@ -98,21 +105,29 @@ class RecipeViewSet(ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def shopping_cart(self, request, pk):
+        """Добавляет рецепт в продуктовую корзину."""
         return self.post_method_for_actions(
             request, pk, serializers=CartSerializer
         )
 
     @shopping_cart.mapping.delete
     def delete_shopping_cart(self, request, pk):
+        """Удаляет рецепт из продуктовой корзины."""
         return self.delete_method_for_actions(
-            request=request, pk=pk, model=Cart)
+            request=request, pk=pk, model=Cart
+        )
 
     @action(
-        detail=False, 
-        methods=['get'], 
+        detail=False,
+        methods=['get'],
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
+        """
+        Список покупок скачивается из продуктовой корзины в формате .txt.
+        Пользователь получает файл с необходимыми ингредиентами для всех
+        добавленных в продуктовую корзину рецептов.
+        """
         shopping_list = IngredientRecipe.objects.filter(
             recipe__cart__user=request.user
         ).values(
@@ -132,16 +147,19 @@ class RecipeViewSet(ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def favorite(self, request, pk):
+        """Добавляет рецепт в избранное."""
         return self.post_method_for_actions(
             request=request, pk=pk, serializers=FavoriteSerializer)
 
     @favorite.mapping.delete
     def delete_favorite(self, request, pk):
+        """Удаляет рецепт из избранного."""
         return self.delete_method_for_actions(
             request=request, pk=pk, model=Favorite)
 
 
 class IngredientViewSet(ModelViewSet):
+    """Viewset для работы с игредиентами."""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (IngredientSearchFilter,)
@@ -149,5 +167,6 @@ class IngredientViewSet(ModelViewSet):
 
 
 class TagViewSet(ModelViewSet):
+    """Viewset для работы с тэгами."""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
