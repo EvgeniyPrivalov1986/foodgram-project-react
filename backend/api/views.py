@@ -36,7 +36,7 @@ class UsersViewSet(UserViewSet):
 
     @action(methods=['get'], detail=False)
     def subscriptions(self, request):
-        """Список авторов, на которых подписан пользователь."""
+        """Получает список авторов, на которых подписан пользователь."""
         subscriptions_list = self.paginate_queryset(
             User.objects.filter(following__user=request.user)
         )
@@ -80,7 +80,7 @@ class RecipeViewSet(ModelViewSet):
     permission_classes = (IsAuthorOrAdminOrReadOnly, IsAuthenticatedOrReadOnly)
 
     def get_serializer_class(self):
-        """Получает класс сериализатора."""
+        """Проверяет тип запроса и определяет класс сериализатора."""
         if self.request.method in SAFE_METHODS:
             return RecipeSerializer
         return CreateRecipeSerializer
