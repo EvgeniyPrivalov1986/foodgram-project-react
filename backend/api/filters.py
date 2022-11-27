@@ -15,9 +15,7 @@ class RecipeFilterSet(FilterSet):
     """Фильтр поиска по рецепту."""
     tags = AllValuesMultipleFilter(field_name='tags__slug')
     is_favorited = BooleanFilter(method='get_is_favorited')
-    is_in_shopping_cart = BooleanFilter(
-        method='get_is_in_shopping_cart'
-    )
+    is_in_shopping_cart = BooleanFilter(method='get_is_in_shopping_cart')
 
     class Meta:
         model = Recipe

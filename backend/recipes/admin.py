@@ -10,7 +10,7 @@ class IngredientRecipeInline(admin.TabularInline):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    """Настройка админ панели модели тегов."""
+    """Управление тегами через админ панель."""
     list_display = (
         'name',
         'color',
@@ -23,7 +23,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    """Настройка админ панели модели ингредиентов."""
+    """Управление ингредиентами через админ панель."""
     list_display = (
         'name',
         'measurement_unit'
@@ -35,11 +35,10 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    """Настройка админ панели модели рецептов."""
+    """Управление рецептами через админ панель."""
     list_display = (
         'name',
         'author',
-        'tags',
         'in_favorite'
     )
     list_display_links = ('name',)
@@ -58,7 +57,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(IngredientRecipe)
 class IngredientRecipeAdmin(admin.ModelAdmin):
-    """Настройка админ панели модели ингредиентов в рецепте."""
+    """Управление ингредиентами в рецепте через админ панель."""
     list_display = (
         'recipe',
         'ingredient',
@@ -69,7 +68,7 @@ class IngredientRecipeAdmin(admin.ModelAdmin):
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    """Настройка админ панели модели избранных рецептов."""
+    """Управление избранными рецептами через админ панель."""
     list_display = ('user', 'recipe')
     list_filter = ('user', 'recipe')
     search_fields = ('user', 'recipe')
@@ -77,7 +76,7 @@ class FavoriteAdmin(admin.ModelAdmin):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    """Настройка админ панели модели продуктовой корзины."""
+    """Управление продуктовой корзиной через админ панель."""
     list_display = ('recipe', 'user')
     list_filter = ('recipe', 'user')
     search_fields = ('user',)

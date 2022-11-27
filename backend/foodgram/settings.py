@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['*', '84.252.137.237']
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -135,5 +135,15 @@ MAX_COOKING_TIME_ERROR = 'Максимальное время приготовл
 
 MIN_AMOUNT_INGREDIENT = 1
 MIN_AMOUNT_INGREDIENT_ERROR = 'Минимальное количество игредиентов - 2'
+
+ADD_INGREDIENTS_IN_RECIPES_ERROR = 'Данный ингредиент уже есть в рецепте'
+
+ADD_RECIPES_IN_FAVORITE_ERROR = 'Данный рецепт уже добавлен в избранное'
+
+ADD_RECIPES_IN_SHOPPING_CART_ERROR = 'Данный рецепт уже добавлен в корзину'
+
+USER_FOLLOWING_HIMSELF_ERROR = 'Вы не можете пописаться на себя'
+
+USER_FOLLOWING_FOLLOWER_ERROR = 'Вы уже подписаны на этого автора'
 
 COUNT_RECIPES_IN_PAGE = 6

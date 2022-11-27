@@ -1,7 +1,5 @@
 from django.db.models import F, Sum
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.template.loader import render_to_string
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status
@@ -10,7 +8,6 @@ from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from weasyprint import HTML
 
 from .filters import IngredientSearchFilter, RecipeFilterSet
 from .pagination import CustomPagination
@@ -19,18 +16,19 @@ from .serializers import (CartSerializer, CreateRecipeSerializer,
                           FavoriteSerializer, FollowListSerializer,
                           FollowSerializer, IngredientSerializer,
                           RecipeSerializer, TagSerializer)
+from .utils import download_shopping_cart_response
 from recipes.models import (Cart, Favorite, Ingredient, IngredientRecipe,
                             Recipe, Tag)
 from users.models import Follow, User
 
 
 class UsersViewSet(UserViewSet):
-    """Viewset для работы с пользователями и подписками."""
+    """Viewset для пользователей и подписок."""
     pagination_class = CustomPagination
 
     @action(['get'], detail=False, permission_classes=[IsAuthenticated])
     def me(self, request, *args, **kwargs):
-        """Текущий пользователя."""
+        """Получает текущего пользователя."""
         self.get_object = self.get_instance
         return self.retrieve(request, *args, **kwargs)
 
@@ -71,7 +69,7 @@ class UsersViewSet(UserViewSet):
 
 
 class RecipeViewSet(ModelViewSet):
-    """Viewset для работы с рецептами, продуктовой корзиной и избранным."""
+    """Viewset для рецептов, продуктовой корзины и избранного."""
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = CustomPagination
@@ -123,27 +121,18 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        """
-        Список покупок скачивается из продуктовой корзины в формате .txt.
-        Пользователь получает файл с необходимыми ингредиентами для всех
-        добавленных в продуктовую корзину рецептов.
-        """
+        """Запрашивает загрузку списка ингредиентов из продуктовой корзины."""
         shopping_list = IngredientRecipe.objects.filter(
             recipe__cart__user=request.user
         ).values(
             name=F('ingredient__name'),
             measurement_unit=F('ingredient__measurement_unit')
         ).annotate(amount=Sum('amount')).values_list(
-            'ingredient__name', 'amount', 'ingredient__measurement_unit'
-        )
-        html_template = render_to_string('recipes/pdf_template.html',
-                                         {'ingredients': shopping_list})
-        html = HTML(string=html_template)
-        result = html.write_pdf()
-        response = HttpResponse(result, content_type='application/pdf;')
-        response['Content-Disposition'] = 'inline; filename=shopping_list.pdf'
-        response['Content-Transfer-Encoding'] = 'binary'
-        return response
+            'ingredient__name',
+            'amount',
+            'ingredient__measurement_unit'
+        )        
+        return download_shopping_cart_response(shopping_list)
 
     @action(detail=True, methods=['post'])
     def favorite(self, request, pk):
@@ -159,7 +148,7 @@ class RecipeViewSet(ModelViewSet):
 
 
 class IngredientViewSet(ModelViewSet):
-    """Viewset для работы с игредиентами."""
+    """Viewset для игредиентов."""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (IngredientSearchFilter,)
@@ -167,6 +156,6 @@ class IngredientViewSet(ModelViewSet):
 
 
 class TagViewSet(ModelViewSet):
-    """Viewset для работы с тэгами."""
+    """Viewset для тэгов."""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
