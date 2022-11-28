@@ -1,12 +1,8 @@
 import os
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', default='default')
 
 DEBUG = False
 
@@ -125,6 +121,8 @@ DJOSER = {
     },
 }
 
+COUNT_RECIPES_IN_PAGE = 6
+
 MAX_LENGTH = 254
 
 MIN_COOKING_TIME = 0
@@ -145,5 +143,3 @@ ADD_RECIPES_IN_SHOPPING_CART_ERROR = 'Данный рецепт уже доба�
 USER_FOLLOWING_HIMSELF_ERROR = 'Вы не можете пописаться на себя'
 
 USER_FOLLOWING_FOLLOWER_ERROR = 'Вы уже подписаны на этого автора'
-
-COUNT_RECIPES_IN_PAGE = 6
