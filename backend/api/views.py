@@ -121,7 +121,7 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        """Запрашивает загрузку списка ингредиентов из продуктовой корзины."""
+        """Загружает списка ингредиентов из продуктовой корзины через Utils."""
         shopping_list = IngredientRecipe.objects.filter(
             recipe__cart__user=request.user
         ).values(
@@ -131,7 +131,7 @@ class RecipeViewSet(ModelViewSet):
             'ingredient__name',
             'amount',
             'ingredient__measurement_unit'
-        )        
+        )
         return download_shopping_cart_response(shopping_list)
 
     @action(detail=True, methods=['post'])

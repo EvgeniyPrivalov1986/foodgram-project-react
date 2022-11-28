@@ -316,7 +316,7 @@ class CartSerializer(ModelSerializer):
         return data
 
     def to_representation(self, instance):
-        """Отображает продуктовую корзину."""
+        """Отображает информацию о рецепте."""
         request = self.context.get('request')
         context = {'request': request}
         return RecipeShortInfo(instance.recipe, context=context).data
@@ -343,7 +343,7 @@ class FavoriteSerializer(ModelSerializer):
         return data
 
     def to_representation(self, instance):
-        """Отображает избранные рецепты."""
+        """Отображает информацию о рецепте."""
         request = self.context.get('request')
         context = {'request': request}
         return RecipeShortInfo(

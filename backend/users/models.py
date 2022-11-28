@@ -14,7 +14,7 @@ class UserRole:
 
 
 class User(AbstractUser):
-    """Модель пользователя."""
+    """Модель пользователей."""
     username = models.CharField(
         'Пользователь',
         max_length=settings.MAX_LENGTH,
